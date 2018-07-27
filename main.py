@@ -1,5 +1,4 @@
 from classes.game import BColors, Person
-import pdb
 
 # magic object is an array of spells that can be used
 magic = [{"name": "Fire", "cost": 10, "dmg": 60},
