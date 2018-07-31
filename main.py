@@ -1,50 +1,67 @@
 from classes.game import BColors, Person
+from classes.magic import Spell
 
-# magic object is an array of spells that can be used
-magic = [{"name": "Fire", "cost": 10, "dmg": 100},
-         {"name": "Thunder", "cost": 12, "dmg": 124},
-         {"name": "Blizzard", "cost": 10, "dmg": 100}]
+# Create Black Magic (** using the Spell class **)
+fire = Spell("Fire", 10, 100, "black")
+thunder = Spell("Thunder", 10, 100, "black")
+blizzard = Spell("Blizzard", 10, 100, "black")
+meteor = Spell("Meteor", 20, 200, "black")
+quake = Spell("Quake", 14, 140, "black")
 
-# instantiating your player object and an enemy object
-player = Person(460, 65, 60, 34, magic)
-enemy = Person(1200, 65, 45, 25, magic)
+# Create White Magic (** using the Spell class **)
+cure = Spell("Cure", 12, 120, "white")
+curea = Spell("Curea", 18, 200, "black")
+
+
+# Instantiate player and enemy object
+player = Person(460, 65, 60, 34, [fire, thunder, blizzard, meteor, cure, curea])
+enemy = Person(1200, 65, 45, 25, [])
+
+print(player.magic)  # prints the objects from the self.magic list (these are from the Spell class)
+print(player.hp)  # prints the hp instance attribute value from the Person class
 
 running = True
 i = 0
 
 print(f'{BColors.FAIL + BColors.BOLD}An Enemy Attacks!{BColors.ENDC}')
 
-# the battle loop
+# The Battle Loop
 while running:
     print("=" * 17)
     player.choose_action()
     choice = int(input('Choose action: '))
 
     # players attack
-    if choice == 1:
+    if choice == 1:  # Physical Attack
         attack_damage = player.generate_damage()
         enemy.take_damage(attack_damage)  # inflicting damage on the enemy
         print(f'You attacked for {attack_damage} points of damage')
-    else:
+    elif choice == 2:  # Magic Attack
         player.choose_magic()
         spell_index = int(input('Choose spell: ')) - 1  # starting with 0 index to work with magic list/array
-        spell_damage = player.generate_spell_damage(spell_index)
-        enemy.take_damage(spell_damage)
-        spell = magic[spell_index]["name"]
-        spell_cost = player.get_spell_mp_cost(spell_index)
+
+        spell_chosen = player.magic[spell_index]  # remember, this is an object from the Spell class
+        spell_damage = spell_chosen.generate_damage()
 
         current_mp = player.get_mp()  # getting the total magic points the player currently has
 
-        if spell_cost > current_mp:  # handling scenario where you don't have enough mp to cast desired spell
+        if spell_chosen.cost > current_mp:  # handling scenario where you don't have enough mp to cast desired spell
             print(f'{BColors.FAIL}\nYou do not have enough current mp to cast this spell. The current spell requires '
                   f'an additional {spell_cost - current_mp} points{BColors.ENDC}')
             continue  # if you don't have enough mp, loop to beginning to be able to use attack
 
-        player.reduce_mp(spell_cost)  # reduce your magic points for the casted spell
-        enemy.take_damage(spell_damage)
+        player.reduce_mp(spell_chosen.cost)  # reduce your magic points for the casted spell
 
-        print(f'{BColors.OKBLUE}You attacked for {spell_damage} points of damage with your '
-              f'{magic[spell_index]["name"]} spell')
+        if spell_chosen.type == "white":
+            player.heal(spell_damage)  # not a great name, actually healing, not damaging
+            print(f'{BColors.OKBLUE}{spell_chosen.name} heals for {spell_damage} HP{BColors.ENDC}')
+        elif spell_chosen.type == "black":
+            enemy.take_damage(spell_damage)
+            print(f'{BColors.OKBLUE}You attacked for {spell_damage} points of damage with your '
+                  f'{spell_chosen.name} spell')  # spell.name from variable above ??
+    else:
+        print("Thanks for playing!!")
+        break
 
     # enemy's attack
     enemy_attack_damage = enemy.generate_damage()
