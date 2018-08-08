@@ -96,6 +96,35 @@ class Person:  # this is our character
         # each of these are an actual object created from the Item class, so each object contains its own attributes
         # two of those attributes that we are referencing are name and description
 
+    def get_enemy_stats(self):
+        hp_bar = ""
+        bar_ticks = (self.hp / self.maxhp) * 100 / 2  # going to have a 50 character bar (players are 25 character bars)
+
+        while bar_ticks > 0:
+            hp_bar += "█"  # fill up the hp bar with bar ticks until bar_ticks == 0
+            bar_ticks -= 1  # counter for filling up hp_bar with bar blocks
+
+        while len(hp_bar) < 50:
+            hp_bar += " "  # adding whitespace to the beginning of the current hp for alignment
+
+        hp_string = f"{self.hp}/{self.maxhp}"
+        current_hp = ""  # empty string that will be populated with updated hp_string variable from below
+
+        if len(hp_string) < 11:  # total max hp xxxx/xxxx (including / character). Making sure xxxx/xxxx == 9, if not
+            # then our current hp has fallen below 4 digits
+            decreased = 11 - len(hp_string)  # determining if the current hp falls below 4 digits
+            while decreased > 0:
+                current_hp += " "  # adding a white space character to keep everything in alignment when current hp
+                # drops to 3 digits or below
+                decreased -= 1  # removing the decreased count until it reaches 0
+            current_hp += hp_string
+        else:
+            current_hp = hp_string  # if length of hp_string == 9, assign hp_string to current_hp
+
+        print("                        __________________________________________________ ")
+        print(f"{self.name}    {current_hp}  |{BColors.FAIL}{hp_bar}{BColors.ENDC}|")
+
+
     def get_stats(self):
         hp_bar = ""
         bar_ticks = (self.hp / self.maxhp) * 100 / 4  # a green bar block representing a percentage of HP
@@ -108,22 +137,56 @@ class Person:  # this is our character
         mp_ticks = (self.mp / self.maxmp) * 100 / 10  # there are only 10 slots for bars so (10 x 10) = 100%
 
         while bar_ticks > 0:
-            hp_bar += "█"  # fill up the hp bar with bar ticks
+            hp_bar += "█"  # fill up the hp bar with bar ticks until bar_ticks == 0
             bar_ticks -= 1
 
         while len(hp_bar) < 25:
-            hp_bar += " "  # fill up the rest of the bar with blank spaces
+            hp_bar += " "  # adding whitespace to the beginning of the current hp for alignment
 
         while mp_ticks > 0:
-            mp_bar += "█"  # fill up the mp bar with bar ticks
+            mp_bar += "█"  # fill up the mp bar with bar ticks until bar_ticks == 0
             mp_ticks -= 1
 
         while len(mp_bar) < 10:
-            mp_bar += " "
+            mp_bar += " "  # adding whitespace to the beginning of the current mp for alignment
+
+        # this section of code is for handling the current hp/maxhp number
+        # so that when current hp falls to 3 digits or less, the current hp number shifts inward to stay in alignment
+        # this will keep the entire light (graph bars etc.) in alignment
+
+        hp_string = f"{self.hp}/{self.maxhp}"
+        current_hp = ""  # empty string that will be populated with updated hp_string variable from below
+
+        if len(hp_string) < 9:  # total max hp xxxx/xxxx (including / character). Making sure xxxx/xxxx == 9, if not
+            # then our current hp has fallen below 4 digits
+            decreased = 9 - len(hp_string)  # determining if the current hp falls below 4 digits
+            while decreased > 0:
+                current_hp += " "  # adding a white space character to keep everything in alignment when current hp
+                                  # drops to 3 digits or below
+                decreased -= 1  # removing the decreased count until it reaches 0
+            current_hp += hp_string
+        else:
+            current_hp = hp_string  # if length of hp_string == 9, assign hp_string to current_hp
+
+        # this section performs the same calculations for the mp bar to make sure it stays in alignment if the current
+        # mp drops to 2 digits or less
+
+        mp_string = f"{self.mp}/{self.maxmp}"
+        current_mp = ""  # empty string that will be populated with updated mp_string variable from below
+
+        if len(mp_string) < 7:  # this tells us that our current_mp has dropped below 3 digits
+            decreased = 7 - len(mp_string)
+            while decreased > 0:  # while the current_mp isn't full digits (3)
+                current_mp += " "
+                decreased -= 1
+
+            current_mp += mp_string
+        else:
+            current_mp = mp_string
 
         print("                        _________________________              __________ ")
-        print(f"{self.name}    {self.hp}/{self.maxhp}  |{BColors.OKGREEN}{hp_bar}{BColors.ENDC}|"
-              f"    {self.mp}/{self.maxmp} |{BColors.OKBLUE}{mp_bar}{BColors.ENDC}|")
+        print(f"{self.name}    {current_hp}  |{BColors.OKGREEN}{hp_bar}{BColors.ENDC}|"
+              f"    {current_mp} |{BColors.OKBLUE}{mp_bar}{BColors.ENDC}|")
 
 
 

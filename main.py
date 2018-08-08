@@ -36,9 +36,9 @@ player_items = [{"item_name": potion, "quantity": 15}, {"item_name": hipotion, "
 player1 = Person("Valos  :", 3260, 132, 300, 34, player_spells, player_items)
 player2 = Person("Kronos :", 4160, 188, 311, 34, player_spells, player_items)
 player3 = Person("Robotos:", 3089, 174, 288, 34, player_spells, player_items)
-enemy = Person("Mr Ugh", 9200, 431, 525, 25, [], [])
+enemy = Person("Mr Ugh", 5200, 431, 525, 25, [], [])
 
-players = [player1, player2, player3]
+players = [player1]
 
 # print(player.magic)  # prints the objects from the self.magic list (these are from the Spell class)
 # print(player.hp)  # prints the hp instance attribute value from the Person class
@@ -57,6 +57,8 @@ while running:
 
     for player in players:
         player.get_stats()  # the print statements is in the method
+
+    enemy.get_enemy_stats()
 
     for player in players:
         print("\n")
@@ -108,8 +110,13 @@ while running:
                 player.heal(item.prop)
                 print(f'{BColors.OKGREEN}{item.name} heals for {item.prop} HP{BColors.ENDC}')
             elif item.type == "elixer":
-                player.hp = player.maxhp  # fully heal player's HP
-                player.mp = player.maxmp  # fully heal player's MP
+                if item.name == "MegaElixer":
+                    for i in players:
+                        i.hp = i.maxhp  # fully heal all player's HP
+                        i.mp = i.maxmp  # fully heal all player's MP
+                else:
+                    player.hp = player.maxhp  # fully heal player's HP
+                    player.mp = player.maxmp  # fully heal player's MP
                 print(f'{BColors.OKGREEN}{item.name} fully restores HP/MP{BColors.ENDC}')
             elif item.type == "attack":
                 enemy.take_damage(item.prop)
